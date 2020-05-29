@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Se</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+    <link rel="shortcut icon" href="adminResources/images/favicon.ico">
+    <link href="http://fonts.googleapis.com/css?family=Roboto+Slab:400,300,100,700" rel="stylesheet">
+    <link href="http://fonts.googleapis.com/css?family=Roboto:500,400italic,100,700italic,300,700,500italic,400" rel="stylesheet">
+
+    <!--Bootstrap Stylesheet [ REQUIRED ]-->
+    <link href="adminResources/css/bootstrap.min.css" rel="stylesheet">
+    <!--Jasmine Stylesheet [ REQUIRED ]-->
+    <link href="adminResources/css/style.css" rel="stylesheet">
+    <!--Font Awesome [ OPTIONAL ]-->
+    <link href="adminResources/css/font-awesome.min.css" rel="stylesheet">
+    <!--Switchery [ OPTIONAL ]-->
+    <link href="adminResources/css/switchery.min.css" rel="stylesheet">
+    <!--Bootstrap Select [ OPTIONAL ]-->
+    <link href="adminResources/css/bootstrap-select.min.css" rel="stylesheet">
+    <!--Bootstrap Validator [ OPTIONAL ]-->
+    <link href="adminResources/css/bootstrapValidator.min.css" rel="stylesheet">
+    <!--jVector Map [ OPTIONAL ]-->
+    <link href="adminResources/css/jquery-jvectormap.css" rel="stylesheet">
+    <!--Morris.js [ OPTIONAL ]-->
+    <link href="adminResources/css/morris.min.css" rel="stylesheet">
+    <!--Bootstrap Table [ OPTIONAL ]-->
+    <link href="adminResources/css/dataTables.bootstrap.css" rel="stylesheet">
+    <link href="adminResources/css/dataTables.responsive.css" rel="stylesheet">
+    <!--Demo [ DEMONSTRATION ]-->
+    <link href="adminResources/css/jquery-steps.min.css" rel="stylesheet">
+    <!--Demo [ DEMONSTRATION ]-->
+    <link href="adminResources/css/jasmine.css" rel="stylesheet">
+    <link href="adminResources/css/pace.min.css" rel="stylesheet">
+    <script src="adminResources/js/pace.min.js"></script>
+    <script src="adminResources/js/highcharts.js"></script>
+    <script src="adminResources/js/exporting.js"></script>
+    <script>
+        $(function(){
+          $("#menu").load("menu.html");
+          $("#header").load("header.html");
+          $("#footer").load("footer.html");
+
+        });
+    </script>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <!-- Material Design Bootstrap -->
+  <link href="css/mdb.min.css" rel="stylesheet">
+  <!-- Your custom styles (optional) -->
+  <link href="css/style.css" rel="stylesheet">
+
+  <!-- MDBootstrap Datatables  -->
+  <script>
+      $(document).ready(function() {
+        alert("inside ready")
+        var url = document.location.href,
+        params = url.split('?')[1].split('&'),
+        data = {}, tmp;
+        for (var i = 0, l = params.length; i < l; i++) {
+            tmp = params[i].split('=');
+            data[tmp[0]] = tmp[1];
+        }
+        var symbol = data.sym;
+        var quantity = data.qty;
+        var price = data.price;
+        $("#sym").attr("value", symbol);
+        $("#qty").attr("value", quantity);
+        $("#price").attr("value", price);
+        current();
+        getBanks();
+    });
+
+    function current(){
+      var sym = document.getElementById("sym").value;
+
+        $.ajax({
+            method: 'GET', // method attribute of form
+            url: "http://localhost:7070/stockdata/currentprice?symbol="+encodeURIComponent(sym),  // action attribute of form
+            data: JSON.stringify(),
+            contentType: "application/json; charset=utf-8",
+            type: "JSON",
+            success: function(data) {
+                $.each(data, function(key,value){
+                    document.getElementById('currPrice').value = data["05. price"];
+
+                });
+            },
+            error: function() { alert("Getting Current Price Failed!");
+            }
+        });
+    }
+
+    
+  </script>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    google.charts.load('current', {'packages':['line']});
+
+    function intraday(){
+        var sym = document.getElementById("sym").value;
+        var info = new google.visualization.DataTable();
+        info.addColumn('string', 'Date');
+        info.addColumn('number', 'Open');
+        info.addColumn('number', 'High');
+        info.addColumn('number', 'Low');
+        info.addColumn('number', 'Close');
+        var tempInfo = [];
+        $.ajax({
+            method: 'GET', // method attribute of form
+            url: "http://localhost:7070/stockdata/intraday?symbol="+encodeURIComponent(sym),  // action attribute of form "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="+encodeURIComponent(sym)+"&apikey=557BN95RI45P2WDX"
+            data: JSON.stringify(),
+            contentType: "application/json; charset=utf-8",
+            type: "JSON",
+
+            success: function(data) {
+                // dataUpdated = data["Time Series (Daily)"]
+                $.each(data, function(key,value){
+                        var temp = [];
+                        temp.push(key);
+                        temp.push(parseFloat(value["1. open"]));
+                        temp.push(parseFloat(value["2. high"]));
+                        temp.push(parseFloat(value["3. low"]));
+                        temp.push(parseInt(value["4. close"]));
+                        tempInfo.push(temp);
+                        console.log(temp);
+                });
+                console.log(tempInfo);
+                info.addRows(tempInfo);
+                var options = {
+                chart: {
+                  title: 'Price Fluctuation',
+                  subtitle: 'in dollars (USD)'
+                },
+                width: 900,
+                height: 500,
+                axes: {
+                  x: {
+                    0: {side: 'top'}
+                  }
+                }
+              };
+                var chart = new google.charts.Line(document.getElementById('line_top_x'));
+                chart.draw(info, google.charts.Line.convertOptions(options));
+            },
+            error: function() { alert("Intraday Data Failed!");}
+        });
+    }
+
+
+    function daily(){
+        var sym = document.getElementById("sym").value;
+        var info = new google.visualization.DataTable();
+        info.addColumn('string', 'Date');
+        info.addColumn('number', 'Open');
+        info.addColumn('number', 'High');
+        info.addColumn('number', 'Low');
+        info.addColumn('number', 'Close');
+        var tempInfo = [];
+        $.ajax({
+            method: 'GET', // method attribute of form
+            url: "http://localhost:7070/stockdata/daily?symbol="+encodeURIComponent(sym),  // action attribute of form "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="+encodeURIComponent(sym)+"&apikey=557BN95RI45P2WDX"
+            data: JSON.stringify(),
+            contentType: "application/json; charset=utf-8",
+            type: "JSON",
+
+            success: function(data) {
+                // dataUpdated = data["Time Series (Daily)"]
+                $.each(data, function(key,value){
+                        var temp = [];
+                        temp.push(key);
+                        temp.push(parseFloat(value["1. open"]));
+                        temp.push(parseFloat(value["2. high"]));
+                        temp.push(parseFloat(value["3. low"]));
+                        temp.push(parseInt(value["4. close"]));
+                        tempInfo.push(temp);
+                        console.log(temp);
+                });
+                console.log(tempInfo);
+                info.addRows(tempInfo);
+                var options = {
+                chart: {
+                  title: 'Price Fluctuation',
+                  subtitle: 'in dollars (USD)'
+                },
+                width: 900,
+                height: 500,
+                axes: {
+                  x: {
+                    0: {side: 'top'}
+                  }
+                }
+              };
+                var chart = new google.charts.Line(document.getElementById('line_top_x'));
+                chart.draw(info, google.charts.Line.convertOptions(options));
+            },
+            error: function() { alert("Daily Data Failed!");}
+        });
+    }
+
+    function weekly(){
+        var sym = document.getElementById("sym").value;
+        var info = new google.visualization.DataTable();
+        info.addColumn('string', 'Date');
+        info.addColumn('number', 'Open');
+        info.addColumn('number', 'High');
+        info.addColumn('number', 'Low');
+        info.addColumn('number', 'Close');
+        var tempInfo = [];
+        $.ajax({
+            method: 'GET', // method attribute of form
+            url: "http://localhost:7070/stockdata/weekly?symbol="+encodeURIComponent(sym),  // action attribute of form
+            data: JSON.stringify(),
+            contentType: "application/json; charset=utf-8",
+            type: "JSON",
+
+            success: function(data) {
+                $.each(data, function(key,value){
+                        var temp = [];
+                        temp.push(key);
+                        temp.push(parseFloat(value["1. open"]));
+                        temp.push(parseFloat(value["2. high"]));
+                        temp.push(parseFloat(value["3. low"]));
+                        temp.push(parseInt(value["4. close"]));
+                        tempInfo.push(temp);
+
+                });
+                console.log(tempInfo);
+                info.addRows(tempInfo);
+                var options = {
+                chart: {
+                  title: 'Price Fluctuation',
+                  subtitle: 'in dollars (USD)'
+                },
+                width: 900,
+                height: 500,
+                axes: {
+                  x: {
+                    0: {side: 'top'}
+                  }
+                }
+              };
+                var chart = new google.charts.Line(document.getElementById('line_top_x'));
+                chart.draw(info, google.charts.Line.convertOptions(options));
+            },
+            error: function() { alert("Weekly Data Failed!");}
+        });
+    }
+
+    function monthly(){
+        var sym = document.getElementById("sym").value;
+        var info = new google.visualization.DataTable();
+        info.addColumn('string', 'Date');
+        info.addColumn('number', 'Open');
+        info.addColumn('number', 'High');
+        info.addColumn('number', 'Low');
+        info.addColumn('number', 'Close');
+        var tempInfo = [];
+        $.ajax({
+            method: 'GET', // method attribute of form
+            url: "http://localhost:7070/stockdata/monthly?symbol="+encodeURIComponent(sym),  // action attribute of form
+            data: JSON.stringify(),
+            contentType: "application/json; charset=utf-8",
+            type: "JSON",
+
+            success: function(data) {
+                $.each(data, function(key,value){
+                        var temp = [];
+                        temp.push(key);
+                        temp.push(parseFloat(value["1. open"]));
+                        temp.push(parseFloat(value["2. high"]));
+                        temp.push(parseFloat(value["3. low"]));
+                        temp.push(parseInt(value["4. close"]));
+                        tempInfo.push(temp);
+                        console.log(temp);
+                });
+                console.log(tempInfo);
+                info.addRows(tempInfo);
+                var options = {
+                chart: {
+                  title: 'Price Fluctuation',
+                  subtitle: 'in dollars (USD)'
+                },
+                width: 900,
+                height: 500,
+                axes: {
+                  x: {
+                    0: {side: 'top'}
+                  }
+                }
+              };
+                var chart = new google.charts.Line(document.getElementById('line_top_x'));
+                chart.draw(info, google.charts.Line.convertOptions(options));
+            },
+            error: function() { alert("Monthly Data Failed!");}
+        });
+    }
+
+    function getBanks(){
+
+      $.ajax({
+          method: 'GET', // method attribute of form
+          url: "http://localhost:7070/bankdetails/accounts?email="+encodeURIComponent(sessionStorage.userID),  // action attribute of form
+          data: JSON.stringify(),
+          contentType: "application/json; charset=utf-8",
+          type: "JSON",
+
+          success: function(data) {
+
+              $.each(data, function(key,value){
+                var bdata = '';
+                bdata +="<option value='"+value.accountnumber+"'>"+value.bankname+"</option>";
+                 $("#banks").append(bdata);
+              });
+
+
+          },
+          error: function() { alert("Get Banks Failed!");}
+      });
+    }
+
+
+    function check(input) {
+       if (input.value == 0) {
+         input.setCustomValidity('The number must be greater than 0');
+       } else {
+         // input is fine -- reset the error message
+         input.setCustomValidity('');
+       }
+     }
+
+
+</script>
+
+
+</head>
+
+<body>
+    <div id="container" class="effect mainnav-lg navbar-fixed mainnav-fixed">
+            <!--NAVBAR-->
+            <!--===================================================-->
+           <div id="header"></div>
+            <!--===================================================-->
+            <!--END NAVBAR-->
+            <div class="boxed">
+                <!--CONTENT CONTAINER-->
+                <!--===================================================-->
+                <div id="content-container">
+                    <div class="pageheader hidden-xs">
+                        <h3><i class="fa fa-home"></i>Stock Information</h3>
+                        <div class="breadcrumb-wrapper">
+                            <span class="label">You are here:</span>
+                            <ol class="breadcrumb">
+                                <li> <a href="#"> Home </a> </li>
+                                <li class="active">Market </li>
+                            </ol>
+                        </div>
+                    </div>
+                    <!--Page content-->
+                    <!--===================================================-->
+                    <div id="page-content">
+                       <div class="row">
+                             <div class="col-md-12">
+
+                        <!-- Basic Data Tables -->
+                        <!--===================================================-->
+                        <div class="panel">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Your Stock</h3>
+                            </div>
+                            
+                            <div class="panel-body">
+                              <div>
+                                <form id="stockSell">
+                                    <div>
+                                        <label class="col-xs-3 control-label">Symbol:</label>
+                                        <div>
+                                            <input type="text" name="ticker" id="sym" readonly="readonly" />
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div>
+                                        <label class="col-xs-3 control-label">Buying Price:</label>
+                                        <div>
+                                            <input type="text" name="price" id="price" readonly="readonly" />
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div>
+                                        <label class="col-xs-3 control-label">Current Price:</label>
+                                        <div>
+                                            <input type="text" id="currPrice" readonly="readonly" />
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div>
+                                        <label class="col-xs-3 control-label">Quantity:</label>
+                                        <div class="col-xs-5">
+                                            <input type="number" class="form-control"  name="quantity" id="qty" oninput="check(this)" required="required" pattern="[A-Za-z0-9]{1,20}"/>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <br>
+                                    <div>
+                                      <label class="col-xs-3 control-label">Select bank:</label>
+                                      <div class="col-xs-5">
+                                        <select id="banks">
+                                           <option value="0">- Select Banks-</option>
+
+                                        </select>
+                                    </div>
+                                    </div>
+                                    <br><br>
+                                    <div>
+                                        <input type="submit" class="btn btn-xs btn-danger" value="Sell"/>
+                                    </div>
+                                </form>
+                              </div>
+                              <br><br>
+                                <div style="clear: right;">
+                                    <span><button type="button" class="btn btn-xs btn-primary" style="float: left;" onclick="intraday()">Today</button></span>
+                                    <span><button type="button" class="btn btn-xs btn-primary" style="float: left;" onclick="daily()">Daily</button></span>
+                                    <span><button type="button" class="btn btn-xs btn-primary" style="float: left;"onclick="weekly()">Weekly</button></span>
+                                    <span><button type="button" class="btn btn-xs btn-primary" style="float: left;"onclick="monthly()">Monthly</button></span>
+                                </div>
+                                <br><br>
+                                <div id="line_top_x"></div>
+                              
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                    </div>
+                    <!--===================================================-->
+                    <!--End page content-->
+                </div>
+
+                <nav id="mainnav-container">
+                    <!--Brand logo & name-->
+                    <!--================================-->
+                     <div class="navbar-header">
+                    <a href="index.html" class="navbar-brand">
+                        <i class="fa fa-cube brand-icon"></i>
+                        <div class="brand-title">
+                            <span class="brand-text">Menu</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- <div id="menu"></div> -->
+
+                <div id="mainnav-menu-wrap">
+                    <div class="nano">
+                        <div class="nano-content">
+                            <ul id="mainnav-menu" class="list-group">
+                                <li>
+                                    <a href="showStocks.html">
+                                        <i class="fa fa-briefcase"></i>
+                                        <span class="menu-title">Market</span>
+                                        <i class="arrow"></i>
+                                    </a>
+
+                                </li>
+
+                        <li>
+                                    <a href="myStocks.html">
+                                        <i class="fa fa-briefcase"></i>
+                                        <span class="menu-title">My Stocks</span>
+                                        <i class="arrow"></i>
+                                    </a>
+
+                                </li>
+                                <li>
+                                    <a href="profile.html">
+                                        <i class="fa fa-user"></i>
+                                        <span class="menu-title">Profile</span>
+                                        <i class="arrow"></i>
+                                    </a>
+
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                </nav>
+                <!--===================================================-->
+                <!--END MAIN NAVIGATION-->
+            </div>
+            <!-- FOOTER -->
+            <!--===================================================-->
+            <div id="footer"></div>
+
+            <!--===================================================-->
+            <!-- END FOOTER -->
+            <!-- SCROLL TOP BUTTON -->
+            <!--===================================================-->
+            <button id="scroll-top" class="btn"><i class="fa fa-chevron-up"></i></button>
+            <!--===================================================-->
+        </div>
+
+    <script src="adminResources/js/jquery-2.1.1.min.js"></script>
+    <!--BootstrapJS [ RECOMMENDED ]-->
+    <script src="adminResources/js/bootstrap.min.js"></script>
+    <!--Fast Click [ OPTIONAL ]-->
+    <script src="adminResources/js/fastclick.min.js"></script>
+    <!--Jquery Nano Scroller js [ REQUIRED ]-->
+    <script src="adminResources/js/jquery.nanoscroller.min.js"></script>
+    <!--Metismenu js [ REQUIRED ]-->
+    <script src="adminResources/js/metismenu.min.js"></script>
+    <!--Switchery [ OPTIONAL ]-->
+    <script src="adminResources/js/switchery.min.js"></script>
+    <!--Jquery Steps [ OPTIONAL ]-->
+    <script src="adminResources/js/parsley.min.js"></script>
+    <!--Jquery Steps [ OPTIONAL ]-->
+    <script src="adminResources/js/jquery-steps.min.js"></script>
+    <!--Bootstrap Select [ OPTIONAL ]-->
+    <script src="adminResources/js/bootstrap-select.min.js"></script>
+    <!--Bootstrap Wizard [ OPTIONAL ]-->
+    <script src="adminResources/js/jquery.bootstrap.wizard.min.js"></script>
+    <!--Masked Input [ OPTIONAL ]-->
+    <script src="adminResources/js/bootstrap-inputmask.min.js"></script>
+    <!--Bootstrap Validator [ OPTIONAL ]-->
+    <script src="adminResources/js/bootstrapValidator.min.js"></script>
+    <!--Flot Chart [ OPTIONAL ]-->
+    <script src="adminResources/js/jquery.flot.min.js"></script>
+    <script src="adminResources/js/jquery.flot.resize.min.js"></script>
+    <script src="adminResources/js/jquery.flot.spline.js"></script>
+    <script src="adminResources/js/moment.min.js"></script>
+    <script src="adminResources/js/moment-range.js"></script>
+    <script src="adminResources/js/jquery.flot.tooltip.min.js"></script>
+    <!--Flot Order Bars Chart [ OPTIONAL ]-->
+    <script src="adminResources/js/jquery.flot.categories.js"></script>
+    <!--DataTables [ OPTIONAL ]-->
+    <script src="adminResources/js/jquery.dataTables.js"></script>
+    <script src="adminResources/js/dataTables.bootstrap.js"></script>
+    <script src="adminResources/js/dataTables.responsive.min.js"></script>
+    <!--Morris.js [ OPTIONAL ]-->
+    <script src="adminResources/js/morris.min.js"></script>
+    <script src="adminResources/js/raphael.min.js"></script>
+    <!--Easy Pie Chart [ OPTIONAL ]-->
+    <script src="adminResources/js/jquery.easypiechart.min.js"></script>
+    <!--Fullscreen jQuery [ OPTIONAL ]-->
+    <script src="adminResources/js/screenfull.js"></script>
+    <!--Form Wizard [ SAMPLE ]-->
+     <script src="adminResources/js/index.js"></script>
+   <!--Form Wizard [ SAMPLE ]-->
+    <script src="adminResources/js/wizard.js"></script>
+    <!--Form Wizard [ SAMPLE ]-->
+    <script src="adminResources/js/form-wizard.js"></script>
+    <!--DataTables Sample [ SAMPLE ]-->
+    <script src="adminResources/js/tables-datatables.js"></script>
+    <!--Jasmine Admin [ RECOMMENDED ]-->
+    <script src="adminResources/js/scripts.js"></script>
+
+    <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="js/popper.min.js"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="js/mdb.min.js"></script>
+  <!-- MDBootstrap Datatables  -->
+<script type="text/javascript" src="js/addons/datatables.min.js"></script>
+
+<script type="text/javascript" language="javascript" src="TableFilter/tablefilter.js"></script>
+
+<script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="js/popper.min.js"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="js/mdb.min.js"></script>
+  <!-- MDBootstrap Datatables  -->
+<script type="text/javascript" src="js/addons/datatables.min.js"></script>
+
+<script type="text/javascript" language="javascript" src="TableFilter/tablefilter.js"></script>
+
+<script language="javascript" type="text/javascript">
+    var tf = setFilterGrid("dtBasicExample");
+</script>
+<script>
+	$('#stockSell').submit(function(e) {
+      alert("Inside sell");
+           // reference to form object
+       var form = this;
+           // for stopping the default action of element
+           e.preventDefault();
+           // mapthat will hold form data
+           var formData = {}
+            //iterate over form elements
+           $.each(this, function(i, v){
+             var input = $(v);
+            // populate form data as key-value pairs
+         // with the name of input as key and its value as value
+
+            formData[input.attr("name")] = input.val();
+          });
+          var currPr = document.getElementById('currPrice').value;
+          var selectedBank = document.getElementById('banks').value;
+          $.ajax({
+               type: 'POST', // method attribute of form
+               url: 'http://localhost:7070/userstocks/sell?email='+encodeURIComponent(sessionStorage.userID)+'&accountno='+encodeURIComponent(selectedBank)+'&curprice='+encodeURIComponent(currPr),
+               data : JSON.stringify(formData),
+               contentType: 'application/json',
+               success: function() {alert("Sold!");},
+               error: function() {alert("Selling Failed!");}
+           });
+      });
+
+</script>
+
+
+
+
+</body>
+</html>

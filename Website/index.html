@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Surveillance System</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <link rel="shortcut icon" href="adminResources/images/favicon.ico">
+	<link href="http://fonts.googleapis.com/css?family=Roboto+Slab:400,300,100,700" rel="stylesheet">
+    <link href="http://fonts.googleapis.com/css?family=Roboto:500,400italic,100,700italic,300,700,500italic,400" rel="stylesheet">
+    <!--Bootstrap Stylesheet [ REQUIRED ]-->
+    <link href="adminResources/css/bootstrap.min.css" rel="stylesheet">
+    <!--Jasmine Stylesheet [ REQUIRED ]-->
+    <link href="adminResources/css/style.css" rel="stylesheet">
+    <!--Font Awesome [ OPTIONAL ]-->
+    <link href="adminResources/css/font-awesome.min.css" rel="stylesheet">
+    <!--Switchery [ OPTIONAL ]-->
+    <link href="adminResources/css/switchery.min.css" rel="stylesheet">
+    <!--Bootstrap Select [ OPTIONAL ]-->
+    <link href="adminResources/css/bootstrap-select.min.css" rel="stylesheet">
+    <!--Bootstrap Validator [ OPTIONAL ]-->
+    <link href="adminResources/css/bootstrapValidator.min.css" rel="stylesheet">
+    <!--jVector Map [ OPTIONAL ]-->
+    <link href="adminResources/css/jquery-jvectormap.css" rel="stylesheet">
+    <!--Morris.js [ OPTIONAL ]-->
+    <link href="adminResources/css/morris.min.css" rel="stylesheet">
+    <!--Bootstrap Table [ OPTIONAL ]-->
+    <link href="adminResources/css/dataTables.bootstrap.css" rel="stylesheet">
+    <link href="adminResources/css/dataTables.responsive.css" rel="stylesheet">
+    <!--Demo [ DEMONSTRATION ]-->
+    <link href="adminResources/css/jquery-steps.min.css" rel="stylesheet">
+    <!--Demo [ DEMONSTRATION ]-->
+    <link href="adminResources/css/jasmine.css" rel="stylesheet">
+    <link href="adminResources/css/pace.min.css" rel="stylesheet">
+    <script src="adminResources/js/pace.min.js"></script>
+	<script src="adminResources/js/highcharts.js"></script>
+	<script src="adminResources/js/exporting.js"></script>
+	<script>
+	    $(function(){
+	      
+	      $("#header").load("header.html");
+	      $("#footer").load("footer.html");
+
+	    });
+    </script>
+
+
+
+</head>
+
+<body>
+
+    <div id="container" class="effect mainnav-lg navbar-fixed mainnav-fixed">
+
+        <div id="header"></div>
+
+        <div class="boxed">
+
+            <div id="content-container">
+
+                <div class="pageheader hidden-xs">
+                  <h3><i class="fa fa-home"></i> Dashboard </h3>
+                    <div class="breadcrumb-wrapper">
+                      <span class="label">You are here:</span>
+                         <ol class="breadcrumb">
+                            <li> <a href="#"> Home </a> </li>
+                            <li class="active"> Dashboard </li>
+                         </ol>
+                    </div>
+                </div>
+
+            </div>
+
+            <nav id="mainnav-container">
+
+                <div class="navbar-header">
+                    <a href="index.html" class="navbar-brand">
+                        <i class="fa fa-cube brand-icon"></i>
+                        <div class="brand-title">
+                            <span class="brand-text">Menu</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- <div id="menu"></div> -->
+
+	            <div id="mainnav-menu-wrap">
+				    <div class="nano">
+				        <div class="nano-content">
+				            <ul id="mainnav-menu" class="list-group">
+				                <li>
+				                    <a href="showStocks.html">
+				                        <i class="fa fa-briefcase"></i>
+				                        <span class="menu-title">Market</span>
+				                        <i class="arrow"></i>
+				                    </a>
+
+				                </li>
+
+                                <li>
+				                    <a href="myStocks.html">
+				                        <i class="fa fa-briefcase"></i>
+				                        <span class="menu-title">My Stocks</span>
+				                        <i class="arrow"></i>
+				                    </a>
+
+				                </li>
+
+                                <li>
+                                    <a href="profile.html">
+                                        <i class="fa fa-user"></i>
+                                        <span class="menu-title">Profile</span>
+                                        <i class="arrow"></i>
+                                    </a>
+
+                                </li>
+				            </ul>
+				       	</div>
+				    </div>
+				</div>
+        	</nav>
+        </div>
+
+
+
+        
+
+        <button id="scroll-top" class="btn"><i class="fa fa-chevron-up"></i></button>
+
+    </div>
+
+    <script src="adminResources/js/jquery-2.1.1.min.js"></script>
+    <!--BootstrapJS [ RECOMMENDED ]-->
+    <script src="adminResources/js/bootstrap.min.js"></script>
+    <!--Fast Click [ OPTIONAL ]-->
+    <script src="adminResources/js/fastclick.min.js"></script>
+    <!--Jquery Nano Scroller js [ REQUIRED ]-->
+    <script src="adminResources/js/jquery.nanoscroller.min.js"></script>
+    <!--Metismenu js [ REQUIRED ]-->
+    <script src="adminResources/js/metismenu.min.js"></script>
+    <!--Switchery [ OPTIONAL ]-->
+    <script src="adminResources/js/switchery.min.js"></script>
+    <!--Jquery Steps [ OPTIONAL ]-->
+    <script src="adminResources/js/parsley.min.js"></script>
+    <!--Jquery Steps [ OPTIONAL ]-->
+    <script src="adminResources/js/jquery-steps.min.js"></script>
+    <!--Bootstrap Select [ OPTIONAL ]-->
+    <script src="adminResources/js/bootstrap-select.min.js"></script>
+    <!--Bootstrap Wizard [ OPTIONAL ]-->
+    <script src="adminResources/js/jquery.bootstrap.wizard.min.js"></script>
+    <!--Masked Input [ OPTIONAL ]-->
+    <script src="adminResources/js/bootstrap-inputmask.min.js"></script>
+    <!--Bootstrap Validator [ OPTIONAL ]-->
+    <script src="adminResources/js/bootstrapValidator.min.js"></script>
+    <!--Flot Chart [ OPTIONAL ]-->
+    <script src="adminResources/js/jquery.flot.min.js"></script>
+    <script src="adminResources/js/jquery.flot.resize.min.js"></script>
+    <script src="adminResources/js/jquery.flot.spline.js"></script>
+    <script src="adminResources/js/moment.min.js"></script>
+    <script src="adminResources/js/moment-range.js"></script>
+    <script src="adminResources/js/jquery.flot.tooltip.min.js"></script>
+    <!--Flot Order Bars Chart [ OPTIONAL ]-->
+    <script src="adminResources/js/jquery.flot.categories.js"></script>
+    <!--DataTables [ OPTIONAL ]-->
+    <script src="adminResources/js/jquery.dataTables.js"></script>
+    <script src="adminResources/js/dataTables.bootstrap.js"></script>
+    <script src="adminResources/js/dataTables.responsive.min.js"></script>
+    <!--Morris.js [ OPTIONAL ]-->
+    <script src="adminResources/js/morris.min.js"></script>
+    <script src="adminResources/js/raphael.min.js"></script>
+    <!--Easy Pie Chart [ OPTIONAL ]-->
+    <script src="adminResources/js/jquery.easypiechart.min.js"></script>
+    <!--Fullscreen jQuery [ OPTIONAL ]-->
+    <script src="adminResources/js/screenfull.js"></script>
+    <!--Form Wizard [ SAMPLE ]-->
+     <script src="adminResources/js/index.js"></script>
+   <!--Form Wizard [ SAMPLE ]-->
+    <script src="adminResources/js/wizard.js"></script>
+    <!--Form Wizard [ SAMPLE ]-->
+    <script src="adminResources/js/form-wizard.js"></script>
+    <!--DataTables Sample [ SAMPLE ]-->
+    <script src="adminResources/js/tables-datatables.js"></script>
+    <!--Jasmine Admin [ RECOMMENDED ]-->
+    <script src="adminResources/js/scripts.js"></script>
+
+
+
+</body>
+
+</html>
